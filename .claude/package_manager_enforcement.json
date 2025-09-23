@@ -1,0 +1,92 @@
+[
+  {
+    "session_id": "0c3f550b-f2a7-4e4a-9de2-ac52124d13f6",
+    "blocked_command": "npm run dev",
+    "suggested_command": "yarn dev",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "a1e15107-9e28-42da-8a34-dcb96cb5ed7e",
+    "blocked_command": "node --version && npm --version",
+    "suggested_command": "node --version && yarn --version",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "1750a81e-99cf-4ddf-9bfe-5bd44251cd9b",
+    "blocked_command": "npm list @playwright/test 2>/dev/null | head -3",
+    "suggested_command": "yarn list @playwright/test 2>/dev/null | head -3",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "1750a81e-99cf-4ddf-9bfe-5bd44251cd9b",
+    "blocked_command": "node --version && npm --version",
+    "suggested_command": "node --version && yarn --version",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "0fcd4ebb-1b21-4f58-86cc-a4f3abf5209b",
+    "blocked_command": "npm run type-check",
+    "suggested_command": "yarn type-check",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "4485f276-a9b3-4fa1-9716-f36df44be95c",
+    "blocked_command": "cd \"D:\\.work\\rental-software\" && npm run lint",
+    "suggested_command": "cd \"D:\\.work\\rental-software\" && yarn lint",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "67032924-7c62-4d0a-a37c-3bc4046e715c",
+    "blocked_command": "cd \"D:\\.work\\rental-software\" && npm list @prisma/client prisma",
+    "suggested_command": "cd \"D:\\.work\\rental-software\" && yarn list @prisma/client prisma",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "81fb4b81-1c31-4378-8fc7-c9d85a391193",
+    "blocked_command": "cd \"D:\\.work\\rental-software\" && npm run type-check",
+    "suggested_command": "cd \"D:\\.work\\rental-software\" && yarn type-check",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "e025fbea-7396-422a-b500-4e3b32777799",
+    "blocked_command": "cd \"D:\\.work\\rental-software\" && npm run type-check",
+    "suggested_command": "cd \"D:\\.work\\rental-software\" && yarn type-check",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "93d444a0-1d1d-4a5b-b086-bf72cd8e5822",
+    "blocked_command": "cd \"D:\\.work\\rental-software\" && npm run lint -- features/kasir/components/detail/ProductDetailCard.tsx",
+    "suggested_command": "cd \"D:\\.work\\rental-software\" && yarn lint -- features/kasir/components/detail/ProductDetailCard.tsx",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "18bfa238-c3a2-48ae-84ce-55723e65c1c7",
+    "blocked_command": "npm list -g @context7/mcp @modelcontextprotocol/server-playwright",
+    "suggested_command": "yarn list -g @context7/mcp @modelcontextprotocol/server-playwright",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "18bfa238-c3a2-48ae-84ce-55723e65c1c7",
+    "blocked_command": "npm list -g --depth=0 | grep -E \"(context7|playwright)\"",
+    "suggested_command": "yarn list -g --depth=0 | grep -E \"(context7|playwright)\"",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  },
+  {
+    "session_id": "18bfa238-c3a2-48ae-84ce-55723e65c1c7",
+    "blocked_command": "npm install -g @context7/mcp",
+    "suggested_command": "yarn install -g @context7/mcp",
+    "reason": "Gunakan 'yarn install' sebagai pengganti 'npm install'."
+  },
+  {
+    "session_id": "18bfa238-c3a2-48ae-84ce-55723e65c1c7",
+    "blocked_command": "cmd /c \"npm install -g @context7/mcp\"",
+    "suggested_command": "cmd /c \"yarn install -g @context7/mcp\"",
+    "reason": "Gunakan 'yarn install' sebagai pengganti 'npm install'."
+  },
+  {
+    "session_id": "52226287-f266-42aa-bd7c-087f355f51b0",
+    "blocked_command": "npm search @21st-dev magic mcp",
+    "suggested_command": "yarn search @21st-dev magic mcp",
+    "reason": "Gunakan 'yarn' sebagai default, kecuali ada alasan khusus."
+  }
+]
