@@ -34,17 +34,18 @@ Sistem sederhana untuk memproses lembar jawaban TOEFL-style menggunakan teknik b
 
 ### **Backend - FastAPI (Python)**
 
+**Core Dependencies:**
 ```python
-Core Dependencies:
+Traditional CV Dependencies:
 ├── fastapi==0.104.1          # Web framework
 ├── uvicorn==0.24.0           # ASGI server
 ├── opencv-python==4.8.1.78  # Image processing
 ├── numpy==1.24.3             # Numerical operations
 ├── pillow==10.0.1            # Image handling
 ├── supabase==2.0.0           # Database client
-├── redis==5.0.0              # Task queue
 ├── pydantic==2.4.2           # Data validation
-└── python-multipart==0.0.6   # File upload support
+├── python-multipart==0.0.6   # File upload support
+└── scikit-image==0.21.0      # Additional image processing
 ```
 
 ### **Frontend - Next.js (React)**
@@ -121,22 +122,22 @@ CREATE TABLE processing_results (
 );
 ```
 
-## 🔧 Image Processing Pipeline
+## 🔧 Traditional Computer Vision Pipeline
 
-### **Core OpenCV Operations**
+### **Core Processing Steps**
 
 ```python
 def process_omr_image(image_path: str) -> dict:
     """
-    Main image processing pipeline
+    Traditional CV processing pipeline
 
     Steps:
-    1. Load and preprocess image
-    2. Detect answer grid template
-    3. Extract individual bubble regions
-    4. Classify each bubble (filled/empty)
-    5. Determine answers per question
-    6. Return structured results
+    1. Load and preprocess image (grayscale, blur, threshold)
+    2. Detect answer grid template using contour analysis
+    3. Extract 60 individual bubble regions (3x20 grid)
+    4. Classify each bubble (filled/empty) using pixel counting
+    5. Map bubbles to A-E answers per question
+    6. Compare with answer key and calculate score
     """
 
     # 1. Preprocessing
@@ -147,10 +148,10 @@ def process_omr_image(image_path: str) -> dict:
     # 2. Template detection
     grid_contours = detect_answer_grid(thresh)
 
-    # 3. Bubble extraction
+    # 3. Bubble extraction (60 regions for 3x20 grid)
     bubble_regions = extract_bubble_regions(grid_contours, img.shape)
 
-    # 4. Classification
+    # 4. Classification using pixel counting
     answers = {}
     for question_num, bubbles in bubble_regions.items():
         filled_bubble = classify_bubbles(bubbles, thresh)
@@ -159,7 +160,7 @@ def process_omr_image(image_path: str) -> dict:
     return {
         "answers": answers,
         "confidence": calculate_confidence(bubble_regions, thresh),
-        "flagged": detect_ambiguous_answers(bubble_regions, thresh)
+        "flagged": detect_multiple_marks(bubble_regions, thresh)
     }
 ```
 
@@ -234,13 +235,13 @@ def classify_bubbles(bubble_regions, thresh_image):
         return {"answer": "BLANK", "confidence": 0.0, "flag": None}
 ```
 
+
 ## 🔗 API Endpoints
 
 ### **FastAPI Backend Endpoints**
 
+**Core Endpoints:**
 ```python
-# Core endpoints for the OMR system
-
 @app.post("/api/upload-answer-key")
 async def upload_answer_key(exam_name: str, answers: dict):
     """Upload and store answer key for an exam"""
@@ -253,7 +254,7 @@ async def upload_student_image(file: UploadFile):
 
 @app.post("/api/process-image")
 async def process_image(submission_id: str, answer_key_id: str):
-    """Process uploaded image and extract answers"""
+    """Process using traditional computer vision methods"""
     pass
 
 @app.get("/api/results/{submission_id}")
@@ -271,22 +272,33 @@ async def export_csv(submission_id: str):
 
 ### **Processing Speed**
 
-- **Target:** 2-5 seconds per image
+**Traditional Computer Vision:**
+- **Target:** 3-5 seconds per image (academic prototype)
+- **Baseline:** Standard laptop/desktop performance
+- **Memory:** <512MB peak usage
+- **CPU:** Standard single-core processing
+
+**System Specifications:**
 - **Image Size:** Max 5MB upload
-- **Resolution:** Minimum 800x600 pixels
+- **Resolution:** Minimum 800x600 pixels (optimal: 1200x1600)
 - **Concurrent Users:** 1-5 (academic prototype)
+- **File Formats:** JPG, PNG
 
 ### **Accuracy Targets**
 
+**Traditional CV Performance:**
 - **Bubble Detection:** 80-90% under normal conditions
 - **Template Recognition:** 85%+ success rate
-- **Overall System Accuracy:** 75-85% (sufficient for academic demo)
+- **Overall System Accuracy:** 75-85% (realistic academic target)
+- **Processing Reliability:** Consistent performance pada standard image conditions
 
 ### **Resource Usage**
 
+**Development Environment:**
 - **Memory:** <512MB peak usage
 - **CPU:** Standard laptop/desktop performance
-- **Storage:** <1GB total (including images)
+- **Storage:** <1GB total (including images dan database)
+- **Network:** Standard internet connection untuk database access
 
 ## 🚀 Deployment Configuration
 
@@ -315,12 +327,8 @@ Backend: Railway
 
 Database: Supabase
   - PostgreSQL hosted
-  - Real-time subscriptions
   - File storage included
-
-Cache: Redis Cloud
-  - Free tier: 30MB
-  - Sufficient for session data
+  - Real-time capabilities
 ```
 
 ## 🔒 Security Considerations

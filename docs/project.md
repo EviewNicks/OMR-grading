@@ -28,9 +28,15 @@ Membangun sistem sederhana berbasis pengolahan citra digital yang dapat:
 - Database storage untuk menyimpan hasil dan kunci jawaban
 - Export hasil dalam format CSV
 
+### ✅ **Pendekatan Pengembangan & Metodologi:**
+
+- **Traditional Computer Vision Focus:** Implementasi solid menggunakan OpenCV dan teknik fundamental
+- **Academic Learning:** Deep understanding fundamental image processing techniques
+- **Incremental Development:** Step-by-step implementation dengan validation di setiap tahap
+- **Research-Based:** Mengikuti best practices dari academic studies untuk OMR systems
+
 ### ❌ **Batasan & Yang Tidak Dikembangkan:**
 
-- Tidak menggunakan advanced computer vision atau machine learning
 - Tidak ada real-time processing atau batch processing besar
 - Tidak ada integrasi dengan LMS atau sistem akademik lain
 - Tidak ada multi-user authentication atau authorization
@@ -52,21 +58,30 @@ Membangun sistem sederhana berbasis pengolahan citra digital yang dapat:
 - Test images dengan berbagai kondisi (lighting, angle, quality)
 - Synthetic data untuk testing edge cases
 
-### **Target Metrics (Realistis untuk Academic Project):**
+### **Target Metrics (Evidence-Based Academic Project):**
 
-- **Bubble Detection Accuracy:** 80-90% pada kondisi normal
-- **Processing Time:** 2-5 detik per lembar (acceptable untuk demo)
+**Traditional Computer Vision Implementation:**
+- **Bubble Detection Accuracy:** 80-90% pada kondisi normal (realistic academic target)
 - **Template Recognition:** 85%+ success rate
-- **Overall System Accuracy:** 75-85% (sufficient untuk proof of concept)
+- **Overall System Accuracy:** 75-85% (achievable dengan basic CV methods)
+- **Processing Time:** 3-5 detik per lembar (academic prototype)
+- **Reliability:** Consistent performance pada various image conditions
 
 ## 5. Pendekatan Teknis
 
-### **Core Approach - Simple Image Processing:**
+### **Implementation Methodology:**
 
-- **Basic OpenCV Pipeline:** Grayscale → Blur → Threshold → Contour Detection
-- **Template Matching:** Deteksi grid jawaban menggunakan pattern recognition
-- **Bubble Detection:** Pixel counting untuk menentukan bubble yang terisi
-- **Rule-based Classification:** Threshold-based decision untuk filled vs empty
+**Traditional Computer Vision Focus (Week 5-9):**
+- **Basic OpenCV Pipeline:** OTSU thresholding + morphological operations
+- **Template Detection:** Grid detection menggunakan contour analysis
+- **Bubble Classification:** Pixel counting dengan threshold-based decision
+- **Answer Extraction:** Systematic bubble analysis untuk 60 soal format
+
+**Interface Development (Week 13-14):**
+- **Web Interface:** Upload dan results display
+- **Database Integration:** Answer keys dan results storage
+- **CSV Export:** Results dalam format yang dapat dianalisis
+- **Error Handling:** Basic validation dan user feedback
 
 ### **Key Features:**
 
@@ -188,37 +203,30 @@ for each question (1-60):
         answer = "BLANK"
 ```
 
-## 10. Timeline Pengembangan (8 Minggu)
+## 10. Timeline Pengembangan (16 Minggu) - Academic Schedule
 
-### **Phase 1: Foundation (Minggu 1-3)**
+### **Phase 1: Traditional CV Implementation (Week 5-9)**
 
-- **Minggu 1:** Setup environment, explore Kaggle dataset, basic OpenCV experiments
-- **Minggu 2:** Develop image preprocessing pipeline, template detection prototype
-- **Minggu 3:** Implement bubble detection and basic fill classification
+- **Week 5:** Preprocessing mastery - OTSU thresholding, Gaussian blur, morphological operations
+- **Week 6:** Template detection - Contour analysis, grid identification, ROI extraction
+- **Week 7:** Bubble extraction - Systematic 60 regions extraction dengan cleanup
+- **Week 8:** Feature extraction - Pixel density analysis, confidence scoring
+- **Week 9:** Classification - Binary classification, answer mapping, scoring algorithm
 
-### **Phase 2: Integration (Minggu 4-6)**
+### **Phase 2: Testing & Validation (Week 10-12)**
 
-- **Minggu 4:** Build FastAPI backend with image processing endpoints
-- **Minggu 5:** Develop Next.js frontend with upload and results interface
-- **Minggu 6:** Integrate frontend-backend, implement database storage
+- **Week 10-11:** Performance testing, error analysis, system optimization
+- **Week 12:** Statistical validation, accuracy measurement, comprehensive testing
 
-### **Phase 3: Testing & Documentation (Minggu 7-8)**
+### **Phase 3: Interface Development (Week 13-14)**
 
-- **Minggu 7:** End-to-end testing, debugging, performance optimization
-- **Minggu 8:** Academic documentation, demo preparation, final presentation
+- **Week 13:** FastAPI backend development, database integration
+- **Week 14:** Next.js frontend, end-to-end integration
 
-### **Deliverables per Week:**
+### **Phase 4: Final Polish (Week 15-16)**
 
-```
-Week 1: Development environment + dataset analysis
-Week 2: Working image processing prototype
-Week 3: Bubble detection with accuracy metrics
-Week 4: Backend API with image processing endpoints
-Week 5: Frontend interface with basic functionality
-Week 6: Full-stack integration with database
-Week 7: Complete system testing and bug fixes
-Week 8: Academic report + demo video + presentation
-```
+- **Week 15:** Testing, documentation, demo preparation
+- **Week 16:** Final optimization, academic presentation
 
 ## 11. Academic Requirements & Success Criteria
 
