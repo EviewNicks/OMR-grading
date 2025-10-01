@@ -143,7 +143,7 @@ template_detector.py
 **Konsep**: Menggunakan probabilistic approach untuk handling uncertainty dalam detection
 
 **Implementation**:
-- **Bayesian Grid Estimation**: Prior knowledge tentang grid layouts
+- **Bayesian Grid Estimation**: Prior iyaknowledge tentang grid layouts
 - **Uncertainty Quantification**: Confidence intervals untuk each detection component
 - **Robust Estimation**: RANSAC-based approach untuk outlier rejection
 
