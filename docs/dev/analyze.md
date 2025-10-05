@@ -1,377 +1,401 @@
-# Week 6 Notebook Error Analysis Report
+# Week 6 Notebook Error Analysis - Cell 44 & 46 Errors
 
-**Tanggal Analisis**: 2025-10-01
-**Target**: `notebooks/week6_template_detection_analysis.ipynb`
-**Error Locations**: Cell 34 (line 68) dan Cell 36 (line 11)
-**Analisis Type**: Systematic Root Cause Analysis
-
----
-
-## <¯ Executive Summary
-
-Ditemukan **2 critical errors** di Jupyter notebook Week 6 yang disebabkan oleh **attribute/key mismatch** antara implementasi source code (`src/template_detector/`) dan ekspektasi notebook. Kedua error bersifat **data structure inconsistency** yang mudah diperbaiki dengan standardization.
-
-**Impact**: Notebook tidak dapat menjalankan visualization dan performance analysis sections (Sections 4.3 dan 4.4).
+**Tanggal Analisis**: 2025-10-05
+**Error Locations**: Cell 44 (AttributeError) & Cell 46 (KeyError)
+**Status**:  Root Cause Identified
 
 ---
 
-## =4 ERROR 1: AttributeError - 'grid_contour' Not Found
+## =Ë Problem Statement
 
-### Error Details
+### Error 1: Cell 44 - Missing edge_image Attribute
 ```
-Location: Cell 34, Line 68
-Error Type: AttributeError
-Message: 'ContourDetectionResult' object has no attribute 'grid_contour'
+AttributeError: 'HoughDetectionResult' object has no attribute 'edge_image'
+Line 21: axes[2].imshow(detection.edge_image, cmap='gray')
 ```
 
-### Error Context
+### Error 2: Cell 46 - Missing processing_time Key
+```
+KeyError: 'processing_time'
+Line 18: 'Contour_Time_ms': contour_results[i]['processing_time'] * 1000
+```
+
+---
+
+## = Root Cause Analysis
+
+### Error 1: edge_image Attribute
+
+**Notebook Assumption** (Cell 44, Line 21):
 ```python
-# Cell 34 - Visual Step by Step Analysis
-print(f"  Grid Contour Area: {cv2.contourArea(detection.grid_contour)
-      if detection.grid_contour is not None else 0:.0f} pixels")
+axes[2].imshow(detection.edge_image, cmap='gray')
 ```
 
-### Root Cause Analysis
-
-#### L **Ekspektasi Notebook**
-Notebook mengharapkan atribut `detection.grid_contour` (numpy array contour) untuk menghitung area.
-
-####  **Actual Implementation**
-Dari `src/template_detector/core/contour_detector.py` (lines 19-31):
-
+**Actual HoughDetectionResult Structure**:
 ```python
 @dataclass
-class ContourDetectionResult:
-    grid_coordinates: Optional[Tuple[int, int, int, int]]  # (x1, y1, x2, y2) bbox
+class HoughDetectionResult:
+    grid_coordinates: Optional[Tuple[int, int, int, int]]
     confidence: float
-    contours: List[np.ndarray]                              # All detected contours
-    grid_corners: Optional[List[Tuple[int, int]]]          # Corner points (4 points)
-    rectangularity_score: float
-    aspect_ratio: float
+    detected_lines: List[Tuple[float, float]]
+    grid_corners: Optional[List[Tuple[int, int]]]
+    line_intersections: List[Tuple[int, int]]
+    horizontal_lines: List[Tuple[float, float]]
+    vertical_lines: List[Tuple[float, float]]
     processing_time: float
-    method: str = "contour"
+    method: str = "hough"
     validation_score: float = 0.0
     error_message: Optional[str] = None
+    # L NO edge_image attribute!
 ```
 
-**  TIDAK ADA atribut `grid_contour`!**
+**Why edge_image Not Stored**:
+- Edge image adalah intermediate result dari preprocessing
+- HoughDetectionResult hanya store final detection results
+- Menyimpan edge_image akan increase memory footprint significantly
+- Design decision: Store only essential detection outputs
 
-#### Available Attributes untuk Grid Information:
-1. **`grid_coordinates`**: Bounding box coordinates (x1, y1, x2, y2)
-2. **`grid_corners`**: 4 corner points dari detected grid
-3. **`contours`**: List semua contours yang terdeteksi (bukan grid-specific)
+### Error 2: processing_time Key Mismatch
 
-### Solusi
+**Results Structure Comparison**:
 
-#### Option 1: Hitung Area dari Bounding Box Coordinates  Recommended
-```python
-# Cell 34 Fix - Option 1
-if detection.grid_coordinates:
-    x1, y1, x2, y2 = detection.grid_coordinates
-    grid_area = (x2 - x1) * (y2 - y1)
-    print(f"  Grid Area: {grid_area:.0f} pixels")
-else:
-    print(f"  Grid Area: 0 pixels")
-```
-
-#### Option 2: Hitung Area dari Corner Points
-```python
-# Cell 34 Fix - Option 2
-if detection.grid_corners and len(detection.grid_corners) == 4:
-    corners_array = np.array(detection.grid_corners, dtype=np.int32)
-    grid_area = cv2.contourArea(corners_array)
-    print(f"  Grid Corner Area: {grid_area:.0f} pixels")
-else:
-    print(f"  Grid Area: 0 pixels")
-```
-
-#### Option 3: Extend Implementation (Not Recommended)
-Tambahkan atribut `grid_contour` ke `ContourDetectionResult` - **TIDAK DIREKOMENDASIKAN** karena:
-- Breaking change untuk existing code
-- Redundant data (sudah ada grid_coordinates dan grid_corners)
-- Tidak konsisten dengan design pattern
-
----
-
-## =4 ERROR 2: KeyError - 'processing_time' Not Found
-
-### Error Details
-```
-Location: Cell 36, Line 11
-Error Type: KeyError
-Message: 'processing_time'
-```
-
-### Error Context
-```python
-# Cell 36 - Performance Testing & Metrics
-for result in contour_results:
-    det = result['detection']
-    performance_data.append({
-        'Image': result['filename'],
-        'Success': det.grid_coordinates is not None,
-        'Confidence': det.confidence,
-        'Rectangularity': det.rectangularity_score,
-        'Processing_Time_ms': result['processing_time'] * 1000,  # L KeyError here
-        'Contours_Found': len(det.contours)
-    })
-```
-
-### Root Cause Analysis
-
-#### L **Ekspektasi Notebook**
-Notebook mengakses `result['processing_time']` di **dictionary level**.
-
-####  **Actual Data Structure**
-
-**Contour Results Structure (Cell 34, lines 1501-1507):**
+**Contour Results** (Lines 1501-1507):
 ```python
 contour_results.append({
     'filename': result['filename'],
-    'detection': detection_result,  # ContourDetectionResult object
+    'detection': detection_result,
     'original': result['original'],
-    'grayscale': result['grayscale']
-    # L MISSING: 'processing_time' key!
+    'grayscale': result['grayscale'],
+    'preprocessed': result['threshold']
+    # L NO 'processing_time' key!
 })
 ```
 
-**Hough Results Structure (lines 1869-1875):**
+**Hough Results** (Lines 1929-1935):
 ```python
+processing_time = time.time() - start_time  #  Measured
 hough_results.append({
     'filename': result['filename'],
     'original': result['original'],
     'grayscale': result['grayscale'],
     'detection': detection_result,
-    'processing_time': processing_time  #  Ada di dictionary level
+    'processing_time': processing_time  #  Present
 })
 ```
 
-**Template Results Structure (lines 2579-2585):**
+**Cell 46 Assumption** (Line 18):
 ```python
-template_results.append({
+'Contour_Time_ms': contour_results[i]['processing_time'] * 1000  # L KeyError!
+```
+
+**Root Cause**:
+- Contour loop TIDAK measure processing_time explicitly
+- Hough & Template loops DO measure processing_time
+- Cell 46 assumes ALL results have 'processing_time' key
+- Inconsistent data structure across detection methods
+
+---
+
+## =¡ Solutions
+
+### Solution 1: Edge Image Visualization (Cell 44)
+
+**Option A: Re-compute Edge Image**
+```python
+# Cell 44 fix - recompute edges from grayscale
+if hough_results:
+    sample = hough_results[0]
+    detection = sample['detection']
+
+    # Re-compute edge image from grayscale
+    grayscale = sample['grayscale']
+    blurred = cv2.GaussianBlur(grayscale, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)  # Use config values
+
+    # Visualization
+    axes[2].imshow(edges, cmap='gray')
+    axes[2].set_title('3. Canny Edge Detection', fontweight='bold', fontsize=12)
+```
+
+**Option B: Store Edge Image in Results**
+```python
+# Cell 42 modification - store edge image
+hough_results.append({
     'filename': result['filename'],
     'original': result['original'],
     'grayscale': result['grayscale'],
-    'detection': detection,
-    'processing_time': processing_time  #  Ada di dictionary level
+    'detection': detection_result,
+    'processing_time': processing_time,
+    'edge_image': edges  # Add intermediate result
 })
 ```
 
-###   **DATA STRUCTURE INCONSISTENCY**
+**Recommended**: Option A (re-compute) - avoids memory overhead
 
-| Method | Dictionary Level `processing_time` | Detection Object `processing_time` |
-|--------|-----------------------------------|------------------------------------|
-| **Contour** | L TIDAK ADA |  Ada di `detection.processing_time` |
-| **Hough** |  Ada di `result['processing_time']` |  Ada di `detection.processing_time` |
-| **Template** |  Ada di `result['processing_time']` | L Template menggunakan separate timing |
+### Solution 2: Processing Time Consistency (Cell 46)
 
-### Solusi
-
-#### Option 1: Access dari Detection Object  Recommended
+**Option A: Add Timing to Contour Loop**
 ```python
-# Cell 36 Fix - Option 1 (Consistent dengan semua methods)
-for result in contour_results:
-    det = result['detection']
-    performance_data.append({
-        'Image': result['filename'],
-        'Success': det.grid_coordinates is not None,
-        'Confidence': det.confidence,
-        'Rectangularity': det.rectangularity_score,
-        'Processing_Time_ms': det.processing_time * 1000,  #  From detection object
-        'Contours_Found': len(det.contours)
+# Cell 40 modification - add timing measurement
+for idx, result in enumerate(preprocessed_results, 1):
+    print(f"\n=ø Processing Image {idx}: {result['filename']}")
+
+    # Detect grid menggunakan grayscale image
+    start_time = time.time()  #  Add timing
+    detection_result = contour_detector.detect_grid(result['grayscale'])
+    processing_time = time.time() - start_time  #  Calculate
+
+    # Store result dengan additional metadata
+    contour_results.append({
+        'filename': result['filename'],
+        'detection': detection_result,
+        'original': result['original'],
+        'grayscale': result['grayscale'],
+        'preprocessed': result['threshold'],
+        'processing_time': processing_time  #  Add key
     })
 ```
 
-**Keuntungan**:
-- Konsisten dengan data model design
-- Tidak perlu modify data creation code
-- Works untuk semua detection methods (Contour, Hough, Template)
-
-#### Option 2: Standardize Dictionary Structure
+**Option B: Use Dataclass processing_time**
 ```python
-# Cell 34 Fix - Modify data creation (lines 1501-1507)
-contour_results.append({
-    'filename': result['filename'],
-    'detection': detection_result,
-    'original': result['original'],
-    'grayscale': result['grayscale'],
-    'processing_time': detection_result.processing_time  #  Add this line
+# Cell 46 modification - use detection.processing_time
+comparison_data.append({
+    'Image': contour_results[i]['filename'],
+    'Contour_Success': contour_det.grid_coordinates is not None,
+    'Hough_Success': hough_det.grid_coordinates is not None,
+    'Contour_Confidence': contour_det.confidence,
+    'Hough_Confidence': hough_det.confidence,
+    'Contour_Time_ms': contour_det.processing_time * 1000,  #  From dataclass
+    'Hough_Time_ms': hough_det.processing_time * 1000,      #  From dataclass
+    'Contour_Rectangularity': contour_det.rectangularity_score if contour_det.grid_coordinates is not None else 0,
+    'Hough_Lines_Count': len(hough_det.detected_lines) if hough_det.grid_coordinates is not None else 0
 })
 ```
 
-**Keuntungan**:
-- Standardize structure across all methods
-- Easier access di analysis sections
-
-**Trade-off**:
-- Data redundancy (ada di 2 tempat)
-- Perlu modify multiple cells
+**Recommended**: Option B (use dataclass) - data already available, most consistent
 
 ---
 
-## =Ê Impact Analysis
+## =Ê Impact Assessment
 
-### Affected Sections
-1. **Section 4.3**: Visual Step-by-Step Analysis
-   - L Tidak bisa calculate grid contour area
-   - Impact: Incomplete visualization statistics
+### Error 1: edge_image (Cell 44)
+**Severity**: =á Medium
+**Scope**: Visualization code only
+**Downstream**: None (display issue only)
+**Fix Complexity**: Low (re-compute or store)
 
-2. **Section 4.4**: Performance Testing & Metrics
-   - L Tidak bisa create performance DataFrame
-   - Impact: Cannot analyze processing time metrics
-
-### Downstream Dependencies
-- Section 7 (Comparative Analysis) also accesses `result['processing_time']`
-- Multiple visualization cells expect consistent data structure
-
-### Severity Assessment
-- **Critical**: Blocks notebook execution dari Section 4.3 onwards
-- **Scope**: Affects 2 major sections + downstream analysis
-- **Complexity**: Low - simple attribute/key name fixes
-- **Risk**: Low - no architectural changes needed
+### Error 2: processing_time (Cell 46)
+**Severity**: =á Medium
+**Scope**: Comparison analysis code
+**Downstream**: None (analysis code only)
+**Fix Complexity**: Very Low (access existing data)
 
 ---
 
-## <¯ Recommended Fix Strategy
+## = Pattern Analysis
 
-### Priority 1: Immediate Fixes (Cell-Level)
+### Recurring Pattern: Documentation-Implementation Drift
 
-#### Fix Cell 34 (Grid Contour Area)
+**Similar Issues Found**:
+1. Cell 38: `canny_threshold1` vs `canny_low_threshold`
+2. Cell 42: `.success` vs `.grid_coordinates`
+3. Cell 44: `.edge_image` (doesn't exist)
+4. Cell 46: `results['processing_time']` (inconsistent structure)
+
+**Root Cause Pattern**:
+- Notebook written based on anticipated structure
+- Implementation evolved differently
+- No automated validation between notebook examples and actual code
+- Inconsistent data structures across similar operations
+
+### Design Insights
+
+**Why HoughDetectionResult Doesn't Store Intermediate Results**:
 ```python
-# Replace line 68 with:
-if detection.grid_coordinates:
-    x1, y1, x2, y2 = detection.grid_coordinates
-    grid_area = (x2 - x1) * (y2 - y1)
-    print(f"  Grid Bounding Box Area: {grid_area:.0f} pixels")
-else:
-    print(f"  Grid Area: 0 pixels (detection failed)")
+# Design philosophy: Store only essential outputs
+
+# L NOT stored (can be recomputed):
+- edge_image (intermediate preprocessing)
+- blurred_image (preprocessing step)
+- individual line images (debug visualization)
+
+#  STORED (essential for downstream):
+- grid_coordinates (detection output)
+- confidence (quality metric)
+- detected_lines (algorithm output)
+- processing_time (performance metric)
 ```
 
-#### Fix Cell 36 (Processing Time)
+**Advantages**:
+-  Lower memory footprint
+-  Cleaner dataclass structure
+-  Only essential data persisted
+-  Intermediate results easily recomputable
+
+**Trade-offs**:
+- L Visualization requires recomputation
+- L Less convenient for debugging
+-  But better for production use
+
+---
+
+## =á Prevention Strategy
+
+### 1. Data Structure Validation Test
 ```python
-# Replace line 11 with:
-'Processing_Time_ms': det.processing_time * 1000,  # Use detection object attribute
+# tests/test_results_structure.py
+def test_results_consistency():
+    """Ensure all detection results have consistent structure"""
+
+    # Test contour results
+    assert 'processing_time' in contour_results[0]
+    assert 'detection' in contour_results[0]
+
+    # Test hough results
+    assert 'processing_time' in hough_results[0]
+    assert 'detection' in hough_results[0]
+
+    # Test structure parity
+    contour_keys = set(contour_results[0].keys())
+    hough_keys = set(hough_results[0].keys())
+    assert contour_keys == hough_keys, "Results structure mismatch"
 ```
 
-#### Fix Similar Issues in Other Cells
-Search for patterns:
-```bash
-# Find all processing_time access issues
-grep -n "result\['processing_time'\]" notebooks/week6_template_detection_analysis.ipynb
-
-# Expected locations:
-# - Cell 36 (line 1703)
-# - Cell 45 (line 2028-2029) - Comparative Analysis
-# - Cell 48 (line 2771) - Template Performance
-```
-
-### Priority 2: Data Structure Standardization
-
-#### Create Consistent Helper Function
+### 2. Attribute Access Validation
 ```python
-# Add to notebook setup cells
-def create_detection_result(filename: str, original: np.ndarray,
-                           grayscale: np.ndarray, detection: Any) -> dict:
-    """Standardized result structure for all detection methods"""
-    return {
-        'filename': filename,
-        'original': original,
-        'grayscale': grayscale,
-        'detection': detection,
-        'processing_time': detection.processing_time  # Consistent access
-    }
+# Add to HoughDetectionResult docstring
+"""
+Available Attributes:
+    - grid_coordinates: Detection output
+    - confidence: Quality score
+    - processing_time: Execution time
+
+NOT Available (recompute if needed):
+    - edge_image: Use cv2.Canny() on grayscale
+    - blurred_image: Use cv2.GaussianBlur()
+"""
 ```
 
-### Priority 3: Validation & Testing
-
-#### Add Validation Cell After Each Detection Section
+### 3. Notebook Best Practices
 ```python
-# Validation cell for Contour Detection
-assert all('detection' in r for r in contour_results), "Missing detection key"
-assert all(hasattr(r['detection'], 'processing_time') for r in contour_results), \
-       "Missing processing_time attribute"
-assert all(hasattr(r['detection'], 'grid_coordinates') for r in contour_results), \
-       "Missing grid_coordinates attribute"
-print(" Contour results validation passed")
+# Always use try-except for attribute access
+try:
+    edge_img = detection.edge_image
+except AttributeError:
+    # Recompute from source
+    edge_img = cv2.Canny(grayscale, 50, 150)
+
+# Always check key existence
+processing_time = results.get('processing_time',
+                              results['detection'].processing_time)
 ```
 
 ---
 
-## =Ë Implementation Checklist
+## =Ú Quick Reference
 
-### Immediate Fixes (High Priority)
-- [ ] **Cell 34**: Replace `detection.grid_contour` dengan `grid_coordinates` calculation
-- [ ] **Cell 36**: Replace `result['processing_time']` dengan `det.processing_time`
-- [ ] **Cell 45**: Fix comparative analysis processing time access (if exists)
-- [ ] **Cell 48**: Fix template performance metrics (if exists)
+### HoughDetectionResult Complete Attributes
+```python
+#  Available attributes:
+detection.grid_coordinates      # Optional[Tuple[int, int, int, int]]
+detection.confidence           # float (0.0-1.0)
+detection.detected_lines       # List[Tuple[float, float]]
+detection.grid_corners         # Optional[List[Tuple[int, int]]]
+detection.line_intersections   # List[Tuple[int, int]]
+detection.horizontal_lines     # List[Tuple[float, float]]
+detection.vertical_lines       # List[Tuple[float, float]]
+detection.processing_time      # float (seconds)
+detection.method              # str = "hough"
+detection.validation_score    # float
+detection.error_message       # Optional[str]
 
-### Data Structure Standardization (Medium Priority)
-- [ ] Review all `contour_results.append()` calls
-- [ ] Review all `hough_results.append()` calls
-- [ ] Review all `template_results.append()` calls
-- [ ] Implement consistent helper function untuk result creation
+# L NOT available (need to recompute):
+detection.edge_image          # AttributeError
+detection.blurred_image       # AttributeError
+```
 
-### Documentation & Validation (Low Priority)
-- [ ] Add data structure documentation cell di notebook
-- [ ] Add validation cells after each detection section
-- [ ] Update task plan documentation dengan findings
-- [ ] Add unit tests untuk result structure validation
+### Results Dictionary Structure
+```python
+# Contour Results (Cell 40) - MISSING processing_time in dict
+{
+    'filename': str,
+    'detection': ContourDetectionResult,
+    'original': np.ndarray,
+    'grayscale': np.ndarray,
+    'preprocessed': np.ndarray
+    # L 'processing_time' NOT in dict (use detection.processing_time)
+}
 
----
+# Hough Results (Cell 42) - HAS processing_time in dict
+{
+    'filename': str,
+    'original': np.ndarray,
+    'grayscale': np.ndarray,
+    'detection': HoughDetectionResult,
+    'processing_time': float  #  Present
+}
 
-## = Additional Findings
-
-### Positive Observations
-1.  **ContourDetectionResult** structure well-designed dengan comprehensive attributes
-2.  `processing_time` correctly tracked dalam detection objects
-3.  Consistent naming conventions dalam source code
-
-### Areas for Improvement
-1.   **Data structure inconsistency** between Contour vs Hough/Template results
-2.   **Missing validation** untuk expected attributes di notebook
-3.   **Unclear naming**: `grid_contour` vs `grid_coordinates` vs `grid_corners` dapat membingungkan
-
-### Preventive Measures
-1. Add **type hints** dan **docstrings** di notebook cells
-2. Create **validation utilities** untuk result structures
-3. Implement **consistent naming conventions** across all detection methods
-4. Add **assertion checks** after data creation
-
----
-
-## =Ö Reference Documentation
-
-### Source Code References
-- `src/template_detector/core/contour_detector.py`: Lines 19-31 (ContourDetectionResult)
-- `src/template_detector/core/contour_detector.py`: Lines 86-98 (Result creation)
-- `notebooks/week6_template_detection_analysis.ipynb`: Cell 34 (Error location 1)
-- `notebooks/week6_template_detection_analysis.ipynb`: Cell 36 (Error location 2)
-
-### Related Documentation
-- `docs/task/task_notebook_implementation.md`: Section 4 implementation plan
-- `docs/week6/week6_implementation_summary.md`: Implementation achievements
-- `docs/server.log`: Complete error traceback
+# Solution: Always use detection.processing_time for consistency
+```
 
 ---
 
-##  Conclusion
+##  Verification Checklist
 
-Kedua errors disebabkan oleh **mismatch antara notebook expectations dan actual implementation**:
-
-1. **ERROR 1**: Notebook mengakses non-existent `grid_contour` attribute
-   - **Fix**: Use `grid_coordinates` untuk calculate area
-
-2. **ERROR 2**: Data structure inconsistency dalam `processing_time` storage
-   - **Fix**: Access dari detection object consistently
-
-**Estimated Fix Time**: 15-30 minutes untuk immediate fixes
-**Risk Level**: Low - simple attribute/key name corrections
-**Testing Required**: Run affected cells untuk validate fixes
-
-**Next Steps**: Implement Priority 1 fixes immediately untuk unblock notebook execution.
+- [x] Root cause identified: edge_image attribute doesn't exist
+- [x] Root cause identified: processing_time key inconsistency
+- [x] Solutions proposed: Re-compute edges, use dataclass timing
+- [x] Impact assessed: Medium severity, visualization/analysis only
+- [x] Pattern analysis: Documentation-implementation drift continues
+- [x] Documentation updated: This analysis document
+- [ ] Fix applied: Pending notebook cells 44 & 46 update
+- [ ] Validation test: Add structure consistency checks
+- [ ] Prevention: Standardize results structure
 
 ---
 
-**Analisis Completed**: 2025-10-01
-**Analyst**: Claude Code Sequential Thinking Analysis
-**Status**: Ready for Implementation
+## = Related Issues
+
+**Previous Fixes**:
+1. Cell 38: Config attribute mismatch  Fixed
+2. Cell 42: Result attribute mismatch  Fixed
+
+**Current Issues**:
+3. Cell 44: Missing edge_image attribute
+4. Cell 46: Inconsistent processing_time structure
+
+**Pattern**: Same root cause (documentation-implementation drift)
+**Solution**: Systematic validation + consistent data structures
+
+---
+
+## =Ý Action Items
+
+### Immediate (Critical Path)
+- [ ] **Cell 44 Fix**: Re-compute edge image from grayscale
+  ```python
+  edges = cv2.Canny(cv2.GaussianBlur(sample['grayscale'], (5,5), 0), 50, 150)
+  axes[2].imshow(edges, cmap='gray')
+  ```
+
+- [ ] **Cell 46 Fix**: Use dataclass processing_time
+  ```python
+  'Contour_Time_ms': contour_det.processing_time * 1000
+  'Hough_Time_ms': hough_det.processing_time * 1000
+  ```
+
+### Short Term (Quality)
+- [ ] Add processing_time to contour_results dict untuk consistency
+- [ ] Document HoughDetectionResult available attributes clearly
+- [ ] Create results structure validation test
+
+### Long Term (Prevention)
+- [ ] Standardize all results dictionaries structure
+- [ ] Add attribute access validation in notebooks
+- [ ] Implement automated notebook-code consistency checks
+
+---
+
+**Next Action**: Fix Cell 44 (re-compute edges) and Cell 46 (use dataclass timing)
+**Estimated Fix Time**: 10 minutes
+**Validation Method**: Run cells 44 & 46, verify no errors

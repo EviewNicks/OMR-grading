@@ -1,33 +1,14 @@
-4.3 Visual Step by step Analysis cell 34
+### 5.3 visualization
 
+cell 44 
+---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 AttributeError                            Traceback (most recent call last)
-Cell In[15], line 68
-     66 print("Key Observations:")
-     67 print(f"  Total Contours Detected: {len(detection.contours)}")
----> 68 print(f"  Grid Contour Area: {cv2.contourArea(detection.grid_contour) if detection.grid_contour is not None else 0:.0f} pixels")
-     69 print(f"  Rectangularity Score: {detection.rectangularity_score:.3f}")
-     70 print(f"  Confidence Score: {detection.confidence_score:.3f}")
+Cell In[17], line 30
+     27 axes[2].axis('off')
+     29 # Stage 4: All Detected Lines
+---> 30 all_lines_img = cv2.cvtColor(sample['grayscale'], cv2.COLOR_GRAY_BGR)
+     31 if detection.detected_lines:
+     32     for rho, theta in detection.detected_lines:
 
-AttributeError: 'ContourDetectionResult' object has no attribute 'grid_contour'
-
-
-4.4 Performance Testing & Metrics cell 36 
-
----------------------------------------------------------------------------
-KeyError                                  Traceback (most recent call last)
-Cell In[16], line 11
-      4 for result in contour_results:
-      5     det = result['detection']
-      6     performance_data.append({
-      7         'Image': result['filename'],
-      8         'Success': det.grid_coordinates is not None,
-      9         'Confidence': det.confidence,
-     10         'Rectangularity': det.rectangularity_score,
----> 11         'Processing_Time_ms': result['processing_time'] * 1000,
-     12         'Contours_Found': len(det.contours)
-     13     })
-     15 df_performance = pd.DataFrame(performance_data)
-     17 print("="*80)
-
-KeyError: 'processing_time'
+AttributeError: module 'cv2' has no attribute 'COLOR_GRAY_BGR'

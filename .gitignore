@@ -17,3 +17,6 @@ dist/
 build/
 # Notebook backups
 *_backup_*.ipynb
+
+# result image 
+analyze.md

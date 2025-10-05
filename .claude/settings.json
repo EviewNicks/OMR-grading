@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/windows_notification.py build_complete"
+            "command": "python .claude/hooks/windows_notification.py build_complete"
           },
           {
             "type": "command",
