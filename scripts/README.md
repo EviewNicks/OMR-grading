@@ -205,6 +205,65 @@ Cell [32] fixed successfully!
 
 ---
 
+### fix_notebook_errors.py
+**Purpose**: Automated fix untuk critical errors di Week 6 notebook (AttributeError & KeyError)
+
+**Usage**:
+```bash
+python scripts/fix_notebook_errors.py
+```
+
+**Problems Fixed**:
+1. **Cell 34 - AttributeError**: `detection.grid_contour` tidak exist
+   - Fix: Gunakan `detection.grid_coordinates` untuk calculate area
+   - Area calculation: `(x2 - x1) * (y2 - y1)` dari bounding box
+
+2. **Cell 36 - KeyError**: `result['processing_time']` tidak ada di dictionary
+   - Fix: Access dari detection object: `det.processing_time`
+
+3. **Cell 60 - KeyError**: Same issue sebagai Cell 36
+   - Fix: Consistent attribute access pattern
+
+**Features**:
+- JSON-based notebook manipulation
+- Pattern-based automatic fixes
+- Comprehensive error detection scan
+- Windows-compatible output (no Unicode issues)
+- Built-in verification
+- Change tracking and reporting
+
+**Output Example**:
+```
+[1/3] Checking Cell 34...
+   [OK] Fixed: grid_contour -> grid_coordinates calculation
+
+[2/3] Checking Cell 36...
+   [OK] Fixed: result['processing_time'] -> det.processing_time
+
+[3/3] Checking for additional processing_time errors...
+   Found error in Cell 60...
+   [OK] Fixed Cell 60: result['processing_time'] -> det.processing_time
+
+[SUCCESS] Changes applied: 3
+   1. Cell 34: Fixed grid_contour AttributeError
+   2. Cell 36: Fixed processing_time KeyError
+   3. Cell 60: Fixed processing_time KeyError
+```
+
+**Documentation**:
+- Analysis Report: `docs/dev/analyze.md`
+- Verification Report: `docs/dev/fix_verification_report.md`
+
+**Testing**:
+```bash
+# After running fix, verify in Jupyter:
+# 1. Restart kernel
+# 2. Run all cells
+# 3. Verify Cell 34, 36, 60 execute without errors
+```
+
+---
+
 ### validate_notebook_structure.py
 **Purpose**: Validate Week 6 Notebook structure and formatting
 

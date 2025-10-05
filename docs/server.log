@@ -1,25 +1,33 @@
-4.3 Visual Step by step Analysis
+4.3 Visual Step by step Analysis cell 34
 
-=== ERROR LOG (RESOLVED) ===
-Date: 2025-09-30
-Status: FIXED
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[15], line 68
+     66 print("Key Observations:")
+     67 print(f"  Total Contours Detected: {len(detection.contours)}")
+---> 68 print(f"  Grid Contour Area: {cv2.contourArea(detection.grid_contour) if detection.grid_contour is not None else 0:.0f} pixels")
+     69 print(f"  Rectangularity Score: {detection.rectangularity_score:.3f}")
+     70 print(f"  Confidence Score: {detection.confidence_score:.3f}")
+
+AttributeError: 'ContourDetectionResult' object has no attribute 'grid_contour'
+
+
+4.4 Performance Testing & Metrics cell 36 
 
 ---------------------------------------------------------------------------
 KeyError                                  Traceback (most recent call last)
-Cell In[26], line 11
-      8 axes = axes.ravel()
-     10 # Stage 1: Original Image
----> 11 axes[0].imshow(cv2.cvtColor(sample['original'], cv2.COLOR_BGR2RGB))
-     12 axes[0].set_title('1. Original Image', fontweight='bold')
-     13 axes[0].axis('off')
+Cell In[16], line 11
+      4 for result in contour_results:
+      5     det = result['detection']
+      6     performance_data.append({
+      7         'Image': result['filename'],
+      8         'Success': det.grid_coordinates is not None,
+      9         'Confidence': det.confidence,
+     10         'Rectangularity': det.rectangularity_score,
+---> 11         'Processing_Time_ms': result['processing_time'] * 1000,
+     12         'Contours_Found': len(det.contours)
+     13     })
+     15 df_performance = pd.DataFrame(performance_data)
+     17 print("="*80)
 
-KeyError: 'original'
-
-=== RESOLUTION ===
-Root Cause: Cell [32] stored data dengan key 'original_image' tapi Cell [34] mengakses dengan key 'original'
-Fix Applied: Changed key name dari 'original_image' ke 'original' di Cell [32]
-Fix Script: scripts/fix_cell_32_key_error.py
-Verification: PASSED - Structure validation completed successfully
-Documentation: docs/cell_32_keyerror_fix_summary.md
-
-Next Action: Execute Cell [34] in Jupyter untuk verify visualization works
+KeyError: 'processing_time'
