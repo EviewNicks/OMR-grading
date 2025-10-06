@@ -1,14 +1,18 @@
-### 5.3 visualization
+### 5.4 Performance Testing & Comparison
 
-cell 44 
----------------------------------------------------------------------------
----------------------------------------------------------------------------
-AttributeError                            Traceback (most recent call last)
-Cell In[17], line 30
-     27 axes[2].axis('off')
-     29 # Stage 4: All Detected Lines
----> 30 all_lines_img = cv2.cvtColor(sample['grayscale'], cv2.COLOR_GRAY_BGR)
-     31 if detection.detected_lines:
-     32     for rho, theta in detection.detected_lines:
+Comparative analysis antara Contour Detection dan Hough Transform Detection.
 
-AttributeError: module 'cv2' has no attribute 'COLOR_GRAY_BGR'
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[14], line 24
+     10     hough_det = hough_results[i]['detection']
+     12     comparison_data.append({
+     13         'Image': contour_results[i]['filename'],
+     14         'Contour_Success': contour_det.grid_coordinates is not None,
+   (...)     21         'Hough_Lines_Count': len(hough_det.detected_lines) if hough_det.grid_coordinates is not None else 0
+     22     })
+---> 24 df_comparison = pd.DataFrame(comparison_data)
+     26 # Display comparison
+     27 print("\n" + "="*80)
+
+NameError: name 'pd' is not defined
