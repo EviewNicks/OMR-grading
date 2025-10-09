@@ -1,0 +1,26 @@
+{
+  "contrast_enhancement": {
+    "method": "CLAHE",
+    "clahe_clip_limit": 4.5,
+    "clahe_tile_size": [
+      4,
+      4
+    ]
+  },
+  "morphological_operations": {
+    "operation": "combined",
+    "opening_kernel": 3,
+    "closing_kernel": 3
+  },
+  "quality_thresholds": {
+    "min_readiness_score": 0.8,
+    "min_rms_contrast": 30,
+    "min_edge_density": 0.03
+  },
+  "performance_metrics": {
+    "success_rate": 100.0,
+    "avg_processing_time": 0.10443687438964844,
+    "avg_quality_improvement": 0.04216651872827854,
+    "avg_rms_improvement_pct": 21.281297118180174
+  }
+}
