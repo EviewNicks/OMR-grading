@@ -102,9 +102,10 @@
       "mcp__atlassian__getVisibleJiraProjects",
       "mcp__atlassian__createJiraIssue",
       "Bash(dir:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   },
-  "outputStyle": "default"
+  "outputStyle": "developer-learning"
 }
