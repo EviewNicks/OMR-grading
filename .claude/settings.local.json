@@ -102,8 +102,7 @@
       "mcp__atlassian__getVisibleJiraProjects",
       "mcp__atlassian__createJiraIssue",
       "Bash(dir:*)",
-      "Bash(npx tsx:*)",
-      "Bash(git commit:*)"
+      "Bash(npx tsx:*)"
     ],
     "deny": []
   },

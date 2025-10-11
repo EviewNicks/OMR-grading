@@ -301,7 +301,33 @@ Laplacian Variance       127.3     128.1     +0.6%
 - Sufficient Edges (density ≥ 0.03): 20/20 (100%)
 - Meets Readiness (score ≥ 0.8): 20/20 (100%)
 
-### 4.3 Analisis Hasil
+### 4.3 Visualisasi Hasil
+
+**Dashboard Performa Pipeline**:
+
+![Performance Dashboard](images/performance_dashboard.png)
+*Gambar 4.1: Comprehensive performance metrics dari 20 test images*
+
+Dashboard menunjukkan:
+- **Success Rate**: 100% (pie chart hijau penuh)
+- **Processing Time**: Clustering di ~0.1s (jauh di bawah target 2s)
+- **Quality Scatter**: Semua titik di atas target line (0.8)
+- **Before/After Bars**: Konsisten improvement across all images
+- **RMS Improvement**: Mayoritas >20% (target tercapai)
+- **Quality Flags**: 100% pass rate untuk semua kriteria
+
+**Visualisasi Stage-by-Stage**:
+
+![Preprocessing Stages](images/preprocessing_stages.png)
+*Gambar 4.2: Pipeline transformation dari Original → Contrast → Morphology → Edges*
+
+Visualisasi 3 sample images menunjukkan:
+- **Original** (0.903-0.926): Baseline quality moderate
+- **+ Contrast**: Peningkatan visibility markings
+- **+ Morphology** (0.915-0.947): Noise removal + quality boost
+- **Edges Preserved**: Sharp edges maintained untuk template detection
+
+### 4.4 Analisis Hasil
 
 **Kekuatan Pipeline**:
 1. **Konsistensi Tinggi**: 100% success rate menunjukkan pipeline robust untuk berbagai kondisi gambar
