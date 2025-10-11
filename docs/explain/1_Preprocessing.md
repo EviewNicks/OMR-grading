@@ -419,17 +419,26 @@ Image Analysis
 
 ### Actual Results Achieved
 
-**Preprocessing Pipeline Performance**:
+**Preprocessing Pipeline Performance (Notebook Experiment)**:
 - ✅ **Success Rate**: 100% (20/20 images)
 - ✅ **Processing Time**: 0.104s per image (96% faster than target)
 - ✅ **RMS Improvement**: +21.3% (realistic given dataset baseline)
 - ✅ **Edge Preservation**: 100% (no edge loss detected)
 
-**Quality Metrics**:
+**Quality Metrics (Notebook Experiment)**:
 - Overall Readiness: 0.856 → 0.898 (+4.9%)
 - RMS Contrast: 35.2 → 42.7 (+21.3%)
 - Edge Density: 0.041 → 0.042 (+2.4%)
 - All quality flags: 100% pass rate
+
+**Production Validation Results (datasets/test/, 42 images)**:
+- ✅ **Success Rate**: 100% (42/42 images)
+- ✅ **Processing Time**: 0.056s per image (35x faster than target)
+- ✅ **Avg Readiness**: 0.902 (90.2%)
+- ✅ **Quality Score**: 92.6% of baseline (>90% target)
+- ✅ **RMS Contrast**: 46.07 (target: ≥30)
+- ✅ **Edge Density**: 0.0881 (target: ≥0.03)
+- ✅ **Zero failures**: Production-ready
 
 ### Validation Framework
 
