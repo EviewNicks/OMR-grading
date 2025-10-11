@@ -1,0 +1,54 @@
+{
+  "validation_date": "2025-10-11 14:23:57",
+  "metrics": {
+    "total_images": 42,
+    "successful": 42,
+    "failed": 0,
+    "success_rate": 1.0,
+    "processing_time": {
+      "average": 0.05645098005022321,
+      "min": 0.03199911117553711,
+      "max": 0.11419296264648438,
+      "total": 2.370941162109375
+    },
+    "quality_metrics": {
+      "readiness_score": {
+        "average": 0.9019868097467236,
+        "std": 0.055107632474436834,
+        "min": 0.8096165430106586,
+        "max": 1.0
+      },
+      "rms_contrast": {
+        "average": 46.07266678368169
+      },
+      "edge_density": {
+        "average": 0.08813892902689469
+      },
+      "laplacian_variance": {
+        "average": 1680.9090249110432
+      }
+    },
+    "quality_flags": {
+      "sufficient_contrast": {
+        "count": 42,
+        "rate": 1.0
+      },
+      "sufficient_edges": {
+        "count": 42,
+        "rate": 1.0
+      },
+      "meets_readiness": {
+        "count": 42,
+        "rate": 1.0
+      }
+    },
+    "failed_images": []
+  },
+  "baseline_comparison": {
+    "baseline_readiness": 0.974,
+    "achieved_readiness": 0.9019868097467236,
+    "difference": -0.07201319025327635,
+    "percentage_of_baseline": 92.60644863929402,
+    "meets_target": true
+  }
+}
