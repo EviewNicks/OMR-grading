@@ -13,6 +13,36 @@ Panduan lengkap untuk memenuhi semua requirements akademik dalam pengembangan si
 
 ---
 
+## ⚠️ Batasan Project Saat Ini
+
+### **Scope Terbatas (By Design):**
+
+**Template Format:**
+- ✅ **Support:** Single fixed template (3×20 grid = 60 soal)
+- ❌ **Tidak Support:** Multi-template flexibility (50, 80 soal, multiple grids)
+- 📝 **Alasan:** Academic simplicity - fokus pada CV fundamentals, bukan config engineering
+
+**Target Detection:**
+- ✅ **Support:** Answer grid detection ONLY
+- ❌ **Tidak Support:** Student information grid, exam metadata, registration marks
+- 📝 **Alasan:** Simplified scope untuk academic timeline (8 weeks)
+
+**Processing Capability:**
+- ✅ **Support:** Single image processing (1 sheet at a time)
+- ❌ **Tidak Support:** Batch processing, real-time processing
+- 📝 **Alasan:** Prototype-level implementation, bukan production system
+
+### **Future Enhancement (Optional - Week 10+):**
+
+Jika waktu development tersedia setelah core implementation:
+- Template configuration system untuk multi-format support
+- Dynamic grid detection untuk flexible layouts
+- Multiple grid detection dalam single sheet
+
+**Prioritas:** Solid single-template implementation > Flexible multi-template system
+
+---
+
 ## 🎯 Learning Objectives Assessment
 
 ### **Primary Learning Objectives:**

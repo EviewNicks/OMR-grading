@@ -42,6 +42,18 @@ Membangun sistem sederhana berbasis pengolahan citra digital yang dapat:
 - Tidak ada multi-user authentication atau authorization
 - Fokus pada 1 format template (dapat dikembangkan kemudian)
 
+### 🔄 **Pengembangan Future (Jika Waktu Tersedia):**
+
+**Template Flexibility Enhancement (Week 10-12 Optional):**
+- **Multi-Template Support:** Konfigurasi dinamis untuk berbagai format (50, 60, 80 soal)
+- **Multiple Grid Detection:** Support untuk multi-grid layouts (2-4 grids per sheet)
+- **Template Configuration System:** JSON/YAML-based template definition
+- **Dynamic Grid Detection:** Flexible detection tanpa hardcoded parameters
+
+**Estimasi Tambahan:** +2-3 minggu development
+**Trade-off:** Kompleksitas vs timeline akademik
+**Prioritas:** Core solid implementation dulu, flexibility kemudian
+
 ## 4. Dataset & Sumber Data
 
 ### **Dataset Utama:**

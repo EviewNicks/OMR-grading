@@ -16,6 +16,23 @@
 
 ---
 
+## 🔍 Scope Clarification
+
+**Week 6 Focus: GRID-Level Detection & CELL-Level Extraction**
+- Template detection untuk lokalisasi answer grid dalam sheet
+- Grid segmentation untuk individual cell extraction
+- Cell quality assessment dan standardization
+- Output: Standardized cell regions ready untuk Week 7 processing
+
+**Week 7 Focus: BUBBLE-Level Refinement & Morfologi**
+- Morfologi operations (opening/closing) untuk bubble cleanup
+- Bubble-level segmentation dalam extracted cells
+- Bubble shape dan fill analysis
+
+**Boundary**: Week 6 delivers **standardized cell regions**, Week 7 processes **bubble content**
+
+---
+
 ## 📋 Epic Breakdown
 
 ### **EPIC: Week 6 Template Detection Implementation**
@@ -40,7 +57,7 @@ Story 3: Detection Fusion (2 hari)
 Story 4: Grid Segmentation (2 hari)
 ├── Perspective correction dan normalization
 ├── Individual cell extraction
-└── Bubble region identification
+└── Cell quality assessment
 
 Story 5: Integration & Testing (1 hari, parallel)
 ├── Comprehensive testing framework
@@ -232,28 +249,28 @@ Story 6: Academic Documentation (1 hari, parallel)
 
 ---
 
-### **Day 8: Bubble Segmentation & Final Integration**
+### **Day 8: Cell Quality Assessment & Final Integration**
 **Priority**: Medium | **Dependencies**: Day 7 completion
 
 **Morning Tasks:**
-- **Bubble Region Identification**
-  - Template-based bubble detection dalam individual cells
-  - Circular/oval contour detection untuk bubble shapes
-  - Regional thresholding untuk bubble extraction
-  - Quality metrics untuk bubble regions
+- **Cell Segmentation Quality Validation**
+  - Cell uniformity assessment (coefficient of variation untuk cell sizes)
+  - Boundary clarity measurement (edge strength analysis)
+  - Grid completeness evaluation (percentage successfully segmented cells)
+  - Quality scoring per cell region untuk downstream confidence
 
 **Afternoon Tasks:**
-- **Final Integration & Validation**
+- **Final Integration & Week 7 Handoff Preparation**
   - End-to-end pipeline testing dengan Week 5 integration
-  - Output format validation untuk Week 7 compatibility
-  - Performance benchmarking untuk complete pipeline
+  - Standardized cell format validation untuk Week 7 compatibility
+  - Performance benchmarking untuk complete detection pipeline
   - Final quality assurance dan error handling
 
 **Output:**
-- ✅ Complete bubble segmentation ready untuk classification
+- ✅ Cell quality assessment framework dengan confidence metrics
 - ✅ End-to-end validated pipeline Week 5 → Week 6 → Week 7
-- ✅ Performance benchmarks dengan accuracy metrics
-- ✅ Production-ready code dengan comprehensive error handling
+- ✅ Standardized cell regions ready untuk Week 7 bubble processing
+- ✅ Performance benchmarks dengan detection accuracy metrics
 
 ---
 
@@ -308,10 +325,10 @@ Story 6: Academic Documentation (1 hari, parallel)
 ## 📊 Success Criteria & Deliverables
 
 ### **Technical Success Criteria:**
-- **Detection Accuracy**: 85%+ pada representative test dataset
-- **Processing Speed**: <3 detik per image untuk complete pipeline
-- **Segmentation Quality**: 90%+ cells extracted dengan acceptable quality
-- **Integration**: Seamless Week 5 → Week 6 → Week 7 pipeline
+- **Detection Accuracy**: 85%+ grid detection pada representative test dataset
+- **Processing Speed**: <3 detik per image untuk complete detection pipeline
+- **Segmentation Quality**: 90%+ cells extracted dengan acceptable quality (cell-level)
+- **Integration**: Seamless Week 5 → Week 6 → Week 7 pipeline dengan standardized cell output
 
 ### **Academic Success Criteria:**
 - **Methodology**: Comprehensive comparative analysis dengan mathematical rigor
