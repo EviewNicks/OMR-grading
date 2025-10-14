@@ -1,0 +1,22 @@
+{
+  "total_images": 20,
+  "traditional_success_count": 0,
+  "rotation_success_count": 0,
+  "traditional_success_rate": 0.0,
+  "rotation_success_rate": 0.0,
+  "success_rate_improvement": 0.0,
+  "traditional_avg_confidence": 0.0,
+  "rotation_avg_confidence": 0.0,
+  "confidence_improvement": 0.0,
+  "max_confidence_improvement": 0.0,
+  "min_confidence_improvement": 0.0,
+  "traditional_avg_time": 0.015674066543579102,
+  "rotation_avg_time": 0.02425161600112915,
+  "avg_time_improvement": -0.008577549457550048,
+  "both_failed": 20,
+  "traditional_only": 0,
+  "rotation_only": 0,
+  "both_success": 0,
+  "rotation_detected_count": 0,
+  "avg_detected_angle": NaN
+}
