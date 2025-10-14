@@ -13,6 +13,7 @@ from pathlib import Path
 @dataclass
 class ContourDetectionConfig:
     """Configuration untuk Contour-based grid detection"""
+    # Existing parameters
     min_area: int = 5000
     max_area: int = 200000
     aspect_ratio_min: float = 0.3
@@ -20,6 +21,17 @@ class ContourDetectionConfig:
     rectangularity_threshold: float = 0.7
     approximation_epsilon: float = 0.02
     hierarchy_level: int = 2
+
+    # NEW: Rotation-robust parameters from notebook
+    min_area_ratio: float = 0.05    # Ultra-relaxed: 0.15 → 0.05
+    max_area_ratio: float = 0.70    # Ultra-relaxed: 0.40 → 0.70
+    min_aspect_ratio: float = 0.05  # Ultra-relaxed: 0.10 → 0.05
+    max_aspect_ratio: float = 0.80  # Ultra-relaxed: 0.60 → 0.80
+    min_rectangularity: float = 0.60 # Ultra-relaxed: 0.85 → 0.60
+
+    # NEW: Control flags
+    use_rotation_robust: bool = True
+    use_hybrid_threshold: bool = True
 
 
 @dataclass
@@ -128,7 +140,15 @@ class TemplateDetectionConfig:
                 'aspect_ratio_max': self.contour.aspect_ratio_max,
                 'rectangularity_threshold': self.contour.rectangularity_threshold,
                 'approximation_epsilon': self.contour.approximation_epsilon,
-                'hierarchy_level': self.contour.hierarchy_level
+                'hierarchy_level': self.contour.hierarchy_level,
+                # NEW: Rotation-robust parameters
+                'min_area_ratio': self.contour.min_area_ratio,
+                'max_area_ratio': self.contour.max_area_ratio,
+                'min_aspect_ratio': self.contour.min_aspect_ratio,
+                'max_aspect_ratio': self.contour.max_aspect_ratio,
+                'min_rectangularity': self.contour.min_rectangularity,
+                'use_rotation_robust': self.contour.use_rotation_robust,
+                'use_hybrid_threshold': self.contour.use_hybrid_threshold
             },
             'hough': {
                 'rho_resolution': self.hough.rho_resolution,
@@ -200,7 +220,15 @@ class TemplateDetectionConfig:
                 aspect_ratio_max=c_cfg.get('aspect_ratio_max', 3.0),
                 rectangularity_threshold=c_cfg.get('rectangularity_threshold', 0.7),
                 approximation_epsilon=c_cfg.get('approximation_epsilon', 0.02),
-                hierarchy_level=c_cfg.get('hierarchy_level', 2)
+                hierarchy_level=c_cfg.get('hierarchy_level', 2),
+                # NEW: Rotation-robust parameters
+                min_area_ratio=c_cfg.get('min_area_ratio', 0.05),
+                max_area_ratio=c_cfg.get('max_area_ratio', 0.70),
+                min_aspect_ratio=c_cfg.get('min_aspect_ratio', 0.05),
+                max_aspect_ratio=c_cfg.get('max_aspect_ratio', 0.80),
+                min_rectangularity=c_cfg.get('min_rectangularity', 0.60),
+                use_rotation_robust=c_cfg.get('use_rotation_robust', True),
+                use_hybrid_threshold=c_cfg.get('use_hybrid_threshold', True)
             )
 
         # Update hough config

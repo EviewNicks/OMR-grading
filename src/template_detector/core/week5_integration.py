@@ -170,7 +170,30 @@ class Week5IntegrationManager:
         """
         params = {}
 
-        # Adaptive contour parameters berdasarkan edge quality
+        # NEW: Rotation-robust contour parameters berdasarkan edge quality
+        if preprocessing_result.edge_readiness >= 0.9:
+            # High edge quality - use stricter rotation-robust parameters
+            params['min_area_ratio'] = 0.08
+            params['max_area_ratio'] = 0.60
+            params['min_aspect_ratio'] = 0.08
+            params['max_aspect_ratio'] = 0.70
+            params['min_rectangularity'] = 0.70
+        elif preprocessing_result.edge_readiness >= 0.7:
+            # Medium edge quality - use standard rotation-robust parameters
+            params['min_area_ratio'] = 0.05
+            params['max_area_ratio'] = 0.70
+            params['min_aspect_ratio'] = 0.05
+            params['max_aspect_ratio'] = 0.80
+            params['min_rectangularity'] = 0.60
+        else:
+            # Low edge quality - use ultra-relaxed rotation-robust parameters
+            params['min_area_ratio'] = 0.03
+            params['max_area_ratio'] = 0.80
+            params['min_aspect_ratio'] = 0.03
+            params['max_aspect_ratio'] = 0.90
+            params['min_rectangularity'] = 0.50
+
+        # Traditional contour parameters (fallback)
         if preprocessing_result.edge_readiness >= 0.9:
             # High edge quality - use stricter contour parameters
             params['contour_min_area'] = 8000
@@ -183,6 +206,10 @@ class Week5IntegrationManager:
             # Low edge quality - use relaxed parameters
             params['contour_min_area'] = 3000
             params['contour_rectangularity_threshold'] = 0.6
+
+        # NEW: Enable rotation-robust detection untuk low quality images
+        params['use_rotation_robust'] = preprocessing_result.edge_readiness < 0.8
+        params['use_hybrid_threshold'] = preprocessing_result.overall_readiness < 0.85
 
         # Adaptive Hough parameters berdasarkan edge density
         if preprocessing_result.edge_density >= 0.2:
@@ -213,7 +240,13 @@ class Week5IntegrationManager:
             params['template_scale_step'] = 0.15
 
         # Adaptive fusion weights berdasarkan readiness scores
+        # Enhanced weights untuk rotation-robust detection
         contour_weight = min(0.6, preprocessing_result.edge_readiness)
+
+        # Boost contour weight jika rotation-robust is enabled
+        if params.get('use_rotation_robust', False):
+            contour_weight = min(0.5, contour_weight * 1.2)  # 20% boost
+
         hough_weight = min(0.4, preprocessing_result.edge_readiness * 0.8)
         template_weight = min(0.4, preprocessing_result.overall_readiness * 0.6)
 
@@ -230,6 +263,42 @@ class Week5IntegrationManager:
 
         logger.info(f"Generated adaptive parameters untuk {preprocessing_result.filename}: {params}")
         return params
+
+    def create_rotation_robust_config(self, preprocessing_result: Week5PreprocessingResult) -> 'ContourDetectionConfig':
+        """
+        Create ContourDetectionConfig dengan rotation-robust parameters
+
+        Args:
+            preprocessing_result: Week 5 preprocessing result
+
+        Returns:
+            ContourDetectionConfig instance dengan rotation-robust settings
+        """
+        from ..config import ContourDetectionConfig
+
+        params = self.get_adaptive_detection_parameters(preprocessing_result)
+
+        return ContourDetectionConfig(
+            # Traditional parameters
+            min_area=params.get('contour_min_area', 5000),
+            max_area=200000,
+            aspect_ratio_min=0.3,
+            aspect_ratio_max=3.0,
+            rectangularity_threshold=params.get('contour_rectangularity_threshold', 0.7),
+            approximation_epsilon=0.02,
+            hierarchy_level=2,
+
+            # NEW: Rotation-robust parameters
+            min_area_ratio=params.get('min_area_ratio', 0.05),
+            max_area_ratio=params.get('max_area_ratio', 0.70),
+            min_aspect_ratio=params.get('min_aspect_ratio', 0.05),
+            max_aspect_ratio=params.get('max_aspect_ratio', 0.80),
+            min_rectangularity=params.get('min_rectangularity', 0.60),
+
+            # NEW: Control flags
+            use_rotation_robust=params.get('use_rotation_robust', True),
+            use_hybrid_threshold=params.get('use_hybrid_threshold', True)
+        )
 
     def get_quality_category_images(self, min_count: int = 3) -> Dict[str, List[str]]:
         """
